@@ -1,0 +1,30 @@
+{
+  "name": "blogseo-helper-cli",
+  "version": "1.0.0",
+  "description": "블로그 글 SEO 최적화 전략을 제공하는 CLI 애플리케이션",
+  "main": "app.js",
+  "bin": {
+    "blogseo": "./app.js"
+  },
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "seo",
+    "blog",
+    "cli",
+    "keyword",
+    "optimization",
+    "korean"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "inquirer": "^8.2.4",
+    "commander": "^9.4.0",
+    "figlet": "^1.5.2"
+  },
+  "type": "module"
+}
