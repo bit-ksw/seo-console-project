@@ -4,10 +4,10 @@
   "description": "블로그 글 SEO 최적화 전략을 제공하는 CLI 애플리케이션",
   "main": "app.js",
   "bin": {
-    "blogseo": "./app.js"
+    "blogseo": "./start.js"
   },
   "scripts": {
-    "start": "node app.js",
+    "start": "node --no-warnings app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -24,7 +24,9 @@
     "chalk": "^4.1.2",
     "inquirer": "^8.2.4",
     "commander": "^9.4.0",
-    "figlet": "^1.5.2"
+    "figlet": "^1.5.2",
+    "openai": "^4.28.0",
+    "dotenv": "^16.3.1"
   },
   "type": "module"
 }

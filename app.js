@@ -1,10 +1,40 @@
 #!/usr/bin/env node
 
+// 특정 경고를 숨기기 위한 설정
+// process.noDeprecation = true; - 읽기 전용 속성이므로 사용 불가
+
 import inquirer from "inquirer";
 import chalk from "chalk";
 import { program } from "commander";
 import figlet from "figlet";
 import { generateSeoSuggestions } from "./lib/seoAnalyzer.js";
+import { generateSeoSuggestionsWithAI } from "./lib/services/openaiService.js";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import dotenv from "dotenv";
+
+// 환경 변수 로드
+dotenv.config();
+
+// 현재 파일 경로 확인
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// 환경 변수 파일이 없는 경우 예제 파일에서 복사
+const envPath = path.join(__dirname, ".env");
+const envExamplePath = path.join(__dirname, ".env-example");
+
+if (!fs.existsSync(envPath) && fs.existsSync(envExamplePath)) {
+  try {
+    fs.copyFileSync(envExamplePath, envPath);
+    console.log(
+      chalk.yellow(".env 파일이 생성되었습니다. OpenAI API 키를 설정해주세요.")
+    );
+  } catch (err) {
+    console.log(chalk.yellow(".env 파일을 수동으로 생성해야 합니다."));
+  }
+}
 
 // 애플리케이션 헤더 표시
 console.log(
@@ -20,6 +50,12 @@ program
     "-p, --platform <platform>",
     "플랫폼 설정 (google, naver 등)",
     "google"
+  )
+  .option("-a, --ai", "OpenAI API를 사용하여 더 정확한 SEO 제안 생성")
+  .option(
+    "-m, --model <model>",
+    "사용할 OpenAI 모델 (gpt-3.5-turbo, gpt-4)",
+    "gpt-3.5-turbo"
   )
   .parse(process.argv);
 
@@ -45,23 +81,57 @@ async function promptUser() {
   return answers.topic;
 }
 
+// OpenAI API 키 확인
+function checkApiKey() {
+  if (!process.env.OPENAI_API_KEY) {
+    console.log(chalk.red("\nOpenAI API 키가 설정되지 않았습니다!"));
+    console.log(chalk.yellow(".env 파일에 OPENAI_API_KEY를 설정해주세요."));
+    return false;
+  }
+  return true;
+}
+
 // 메인 실행 함수
 async function main() {
   try {
     console.log(chalk.blue("BlogSEO Helper CLI에 오신 것을 환영합니다!"));
     console.log(
-      chalk.gray(`언어: ${options.lang}, 플랫폼: ${options.platform}\n`)
+      chalk.gray(
+        `언어: ${options.lang}, 플랫폼: ${options.platform}${
+          options.ai ? ", AI 모드: 활성화" : ""
+        }${options.ai ? `, 모델: ${options.model}` : ""}\n`
+      )
     );
 
     const topic = await promptUser();
     console.log(chalk.green("\n분석 중..."));
 
-    // SEO 제안 생성
-    const seoSuggestions = generateSeoSuggestions(
-      topic,
-      options.lang,
-      options.platform
-    );
+    // SEO 제안 생성 (AI 또는 기본 방식)
+    let seoSuggestions;
+
+    if (options.ai) {
+      if (checkApiKey()) {
+        console.log(chalk.gray("OpenAI API를 사용하여 분석하고 있습니다..."));
+        seoSuggestions = await generateSeoSuggestionsWithAI(
+          topic,
+          options.lang,
+          options.platform
+        );
+      } else {
+        console.log(chalk.gray("API 키가 없어 기본 방식으로 분석합니다..."));
+        seoSuggestions = generateSeoSuggestions(
+          topic,
+          options.lang,
+          options.platform
+        );
+      }
+    } else {
+      seoSuggestions = generateSeoSuggestions(
+        topic,
+        options.lang,
+        options.platform
+      );
+    }
 
     // 결과 출력
     console.log("\n" + chalk.bgCyan.black(" SEO 분석 결과 ") + "\n");

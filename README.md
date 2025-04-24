@@ -2,6 +2,15 @@
 
 블로그 글 SEO 최적화를 위한 콘솔 애플리케이션입니다. 블로그 제목이나 주제를 입력하면 SEO 관련 키워드, 제목 개선 제안, 메타 설명, 태그 등 다양한 최적화 전략을 제공합니다.
 
+## 기능
+
+- **키워드 추천**: 입력한 주제에 맞는 SEO 키워드 제안
+- **제목 최적화**: SEO에 효과적인 제목 구조 제안
+- **메타 설명**: 검색 결과에 표시될 메타 설명 작성 예시
+- **태그 추천**: 주제와 관련된 해시태그 제안
+- **콘텐츠 구조**: 효과적인 블로그 글 구조 제안
+- **OpenAI API 연동**: AI를 활용한 더 정교한 SEO 제안 생성 (선택사항)
+
 ## 설치 방법
 
 ### 필요 조건
@@ -21,6 +30,17 @@ npm install
 # 전역 설치 (선택사항)
 npm install -g .
 ```
+
+### OpenAI API 키 설정 (선택사항)
+
+AI 향상 기능을 사용하려면 OpenAI API 키가 필요합니다:
+
+1. [OpenAI 웹사이트](https://platform.openai.com/)에서 API 키 발급
+2. 프로젝트 루트 디렉토리에 `.env` 파일 생성
+3. `.env` 파일에 API 키 추가:
+   ```
+   OPENAI_API_KEY=your_openai_api_key_here
+   ```
 
 ## 사용 방법
 
@@ -59,19 +79,29 @@ npm start -- --platform=google
 npm start -- --platform=naver
 ```
 
+OpenAI API 사용:
+
+```bash
+# AI 기반 분석 활성화
+npm start -- --ai
+
+# 특정 모델 지정
+npm start -- --ai --model=gpt-4
+```
+
 옵션 조합:
 
 ```bash
-npm start -- --lang=en --platform=google
+npm start -- --lang=en --platform=google --ai
 ```
 
-## 기능
+## 사용자 지정 프롬프트 (고급)
 
-- **키워드 추천**: 입력한 주제에 맞는 SEO 키워드 제안
-- **제목 최적화**: SEO에 효과적인 제목 구조 제안
-- **메타 설명**: 검색 결과에 표시될 메타 설명 작성 예시
-- **태그 추천**: 주제와 관련된 해시태그 제안
-- **콘텐츠 구조**: 효과적인 블로그 글 구조 제안
+AI 모드의 결과를 더 세밀하게 조정하려면 `prompts` 디렉토리에 언어별 시스템 프롬프트 파일을 추가할 수 있습니다:
+
+- `prompts/system-ko.txt`: 한국어 시스템 프롬프트
+- `prompts/system-en.txt`: 영어 시스템 프롬프트
+- `prompts/system-ja.txt`: 일본어 시스템 프롬프트
 
 ## 예시
 
